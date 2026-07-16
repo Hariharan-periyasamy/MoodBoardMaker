@@ -2,6 +2,10 @@
 
 > A full-stack, production-ready **Digital MoodBoard & Inspiration Hub** featuring AI color palette extraction, real-time collaboration, public board sharing, activity logs, and a premium glassmorphism UI.
 
+## 🚀 Live Demo
+- **Frontend (Vercel):** [https://mood-board-maker-six.vercel.app](https://mood-board-maker-six.vercel.app)
+- **Backend API (Render):** [https://moodboard-api-o3sr.onrender.com](https://moodboard-api-o3sr.onrender.com)
+
 ---
 
 ## ✨ Features
