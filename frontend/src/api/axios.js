@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+let rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+if (!rawUrl.endsWith('/api')) rawUrl += '/api';
+const BASE_URL = rawUrl;
 
 // Public routes that must NEVER send an Authorization header
 const PUBLIC_PATHS = ['/auth/login', '/auth/register'];
