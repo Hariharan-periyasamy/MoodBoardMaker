@@ -30,8 +30,6 @@ services:
   - type: web
     name: moodboard-frontend
     env: static
-    region: oregon
-    plan: free
     branch: main
     rootDir: frontend
     buildCommand: npm install && npm run build
