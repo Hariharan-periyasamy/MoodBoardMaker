@@ -1,21 +1,15 @@
 const mongoose = require('mongoose');
-const fs = require('fs');
-
-const logSync = (msg) => {
-  try {
-    fs.writeSync(2, msg + '\n');
-  } catch (e) {
-    console.error(msg);
-  }
-};
 
 const connectDB = async () => {
   const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
   if (!uri || !uri.trim()) {
-    logSync('❌ MONGODB_URI environment variable is missing.');
-    logSync('Please configure MONGODB_URI in your Render Environment Variables or .env file.');
-    process.exit(1);
+    console.error('❌ MONGODB_URI environment variable is missing.');
+    console.error('Please configure MONGODB_URI in your Render Environment Variables.');
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
+    return;
   }
 
   try {
@@ -23,8 +17,10 @@ const connectDB = async () => {
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    logSync(`❌ MongoDB Connection Error: ${error.message}`);
-    process.exit(1);
+    console.error(`❌ MongoDB Error: ${error.message}`);
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
   }
 };
 

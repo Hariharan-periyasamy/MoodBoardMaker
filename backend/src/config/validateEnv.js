@@ -1,65 +1,53 @@
-const fs = require('fs');
-
 /**
- * Synchronous error logger to ensure logs are never dropped
- * by process.exit() on cloud platforms (Render, Linux, Docker).
+ * Startup Environment Variable Validator
+ * Validates required configuration before starting database and HTTP services.
  */
-const logSync = (msg) => {
-  try {
-    fs.writeSync(2, msg + '\n');
-  } catch (e) {
-    console.error(msg);
-  }
-};
 
 const validateEnv = () => {
-  // Support MONGO_URI if user configured it in Render dashboard
+  // Support legacy MONGO_URI from Render dashboard
   if (!process.env.MONGODB_URI && process.env.MONGO_URI) {
     process.env.MONGODB_URI = process.env.MONGO_URI;
-    logSync('ℹ️ Using MONGO_URI environment variable for MONGODB_URI.');
+    console.log('ℹ️ Using MONGO_URI environment variable for MONGODB_URI.');
   }
 
-  const missing = [];
-
-  // MONGODB_URI is strictly required
+  // Check MONGODB_URI
   if (!process.env.MONGODB_URI || !process.env.MONGODB_URI.trim()) {
-    missing.push('MONGODB_URI');
+    console.error('\n============================================================');
+    console.error('❌ MONGODB_URI environment variable is missing.');
+    console.error('============================================================');
+    console.error('👉 ACTION REQUIRED IN RENDER DASHBOARD:');
+    console.error('   1. Open: https://dashboard.render.com');
+    console.error('   2. Click your web service: moodboard-api');
+    console.error('   3. Click "Environment" in the left sidebar menu');
+    console.error('   4. Add or edit key: MONGODB_URI');
+    console.error('   5. Paste your MongoDB Atlas connection string');
+    console.error('   6. Click "Save Changes" and redeploy.');
+    console.error('============================================================\n');
+
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
+    return false;
   }
 
-  // Handle missing variables
-  if (missing.length > 0) {
-    logSync('\n======================================================');
-    logSync('❌ STARTUP FAILED: REQUIRED ENVIRONMENT VARIABLE MISSING');
-    logSync('======================================================');
-    missing.forEach((v) => {
-      logSync(`   - ${v}`);
-    });
-    logSync('\n👉 ACTION REQUIRED IN RENDER:');
-    logSync('   1. Go to your Render Dashboard -> moodboard-api -> Environment');
-    logSync('   2. Add or update key: MONGODB_URI');
-    logSync('   3. Value: mongodb+srv://<user>:<password>@<cluster>.mongodb.net/moodboard?retryWrites=true&w=majority');
-    logSync('   4. Click Save Changes & Redeploy.\n');
-    logSync('======================================================\n');
-
-    process.exit(1);
-  }
-
-  // Warning for missing JWT_SECRET
+  // Provide fallback for JWT_SECRET if not set
   if (!process.env.JWT_SECRET || !process.env.JWT_SECRET.trim()) {
-    logSync('⚠️ WARNING: JWT_SECRET is not set. A default fallback will be used. Please set JWT_SECRET in production.');
+    console.warn('⚠️ JWT_SECRET is not set in environment. Using secure fallback.');
     process.env.JWT_SECRET = 'moodboard_jwt_secret_fallback_key_2026';
   }
 
-  // Warning for missing Cloudinary credentials
+  // Cloudinary credentials notice
   if (
     !process.env.CLOUDINARY_CLOUD_NAME ||
     !process.env.CLOUDINARY_API_KEY ||
     !process.env.CLOUDINARY_API_SECRET
   ) {
-    logSync(
-      '⚠️ WARNING: Cloudinary credentials not fully configured. Image uploads will require Cloudinary in production.'
+    console.warn(
+      '⚠️ Cloudinary credentials not fully configured. Image uploads will require Cloudinary.'
     );
   }
+
+  return true;
 };
 
 module.exports = validateEnv;

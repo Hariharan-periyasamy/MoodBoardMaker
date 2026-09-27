@@ -11,10 +11,12 @@ const PORT = process.env.PORT || 5000;
 
 const start = async () => {
   // 1. Validate required environment variables
-  validateEnv();
+  const isValid = validateEnv();
+  if (!isValid) return;
 
   // 2. Connect to MongoDB Atlas (clean exit on failure)
-  await connectDB();
+  const conn = await connectDB();
+  if (!conn) return;
 
   // 3. Initialize Cloudinary
   initCloudinary();
