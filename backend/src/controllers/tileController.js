@@ -326,25 +326,56 @@ const uploadImage = async (req, res, next) => {
 
     const { path: tempPath, filename } = req.file;
 
+    const isProd = process.env.NODE_ENV === 'production';
+    const hasCloudinary =
+      typeof isCloudinaryConfigured === 'function'
+        ? isCloudinaryConfigured()
+        : !!isCloudinaryConfigured;
+
     // Check Cloudinary
-    if (isCloudinaryConfigured) {
+    if (hasCloudinary) {
       try {
         const result = await cloudinary.uploader.upload(tempPath, {
           folder: 'moodboard',
           resource_type: 'image',
         });
-        
+
         // Clean up temp file from server
-        fs.unlinkSync(tempPath);
+        if (fs.existsSync(tempPath)) {
+          fs.unlinkSync(tempPath);
+        }
 
         return sendSuccess(res, { imageUrl: result.secure_url }, 'Uploaded to Cloudinary successfully');
       } catch (cloudinaryError) {
-        console.error('Cloudinary upload failure, trying local fallback:', cloudinaryError);
-        // Fallback to local file movement if Cloudinary throws an error during api call
+        console.error('Cloudinary upload failure:', cloudinaryError.message || cloudinaryError);
+        if (isProd) {
+          if (fs.existsSync(tempPath)) {
+            try {
+              fs.unlinkSync(tempPath);
+            } catch (e) {}
+          }
+          return sendError(
+            res,
+            `Cloudinary upload failed: ${cloudinaryError.message || 'Error communicating with Cloudinary'}`,
+            500
+          );
+        }
+        // In development, fall through to local fallback
       }
+    } else if (isProd) {
+      if (fs.existsSync(tempPath)) {
+        try {
+          fs.unlinkSync(tempPath);
+        } catch (e) {}
+      }
+      return sendError(
+        res,
+        'Cloudinary is not configured. Cloudinary is required for image storage in production.',
+        500
+      );
     }
 
-    // Local Fallback: Move file to public uploads dir
+    // Local Fallback: Move file to public uploads dir (development only)
     const uploadsDir = path.join(__dirname, '../../uploads');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });

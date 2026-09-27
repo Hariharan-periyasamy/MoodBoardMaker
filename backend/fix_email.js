@@ -1,6 +1,14 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/moodboard').then(async () => {
+const mongoUri = process.env.MONGODB_URI;
+
+if (!mongoUri) {
+  console.error('❌ MONGODB_URI environment variable is missing.');
+  process.exit(1);
+}
+
+mongoose.connect(mongoUri).then(async () => {
   // Fix email typo: hari@gmail.coom → hari@gmail.com
   const result = await mongoose.connection.db.collection('users').updateOne(
     { email: 'hari@gmail.coom' },

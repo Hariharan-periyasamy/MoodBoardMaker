@@ -28,7 +28,7 @@ export default function CollaboratorsPanel({ board, isOpen, onClose }) {
       ? boardsApi.inviteCollaborator(board._id, data)
       : fetch(`/api/boards/${board._id}/collaborators`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('mb_token') || localStorage.getItem('token')}` },
           body: JSON.stringify(data),
         }).then(r => r.json()),
     onSuccess: () => {
@@ -45,7 +45,7 @@ export default function CollaboratorsPanel({ board, isOpen, onClose }) {
       ? boardsApi.removeCollaborator(board._id, userId)
       : fetch(`/api/boards/${board._id}/collaborators/${userId}`, {
           method: 'DELETE',
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem('mb_token') || localStorage.getItem('token')}` },
         }).then(r => r.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['board', board._id] });

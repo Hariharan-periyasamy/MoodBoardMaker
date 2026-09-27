@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const saveSession = (userData, token) => {
     localStorage.setItem('mb_token', token);
+    localStorage.setItem('token', token);
     localStorage.setItem('mb_user', JSON.stringify(userData));
     setUser(userData);
   };
@@ -62,6 +63,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     localStorage.removeItem('mb_token');
+    localStorage.removeItem('token');
     localStorage.removeItem('mb_user');
     setUser(null);
   }, []);

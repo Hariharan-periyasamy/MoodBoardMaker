@@ -2,10 +2,6 @@
 
 > A full-stack, production-ready **Digital MoodBoard & Inspiration Hub** featuring AI color palette extraction, real-time collaboration, public board sharing, activity logs, and a premium glassmorphism UI.
 
-## 🚀 Live Demo
-- **Frontend (Vercel):** [https://mood-board-maker-six.vercel.app](https://mood-board-maker-six.vercel.app)
-- **Backend API (Render):** [https://moodboard-api-o3sr.onrender.com](https://moodboard-api-o3sr.onrender.com)
-
 ---
 
 ## ✨ Features
@@ -150,7 +146,7 @@ MoodTracker/
 ### Database → MongoDB Atlas
 1. Create a free cluster at [cloud.mongodb.com](https://cloud.mongodb.com)
 2. Whitelist all IPs (`0.0.0.0/0`) for Render compatibility
-3. Copy the connection URI and set it as `MONGO_URI`
+3. Copy the connection URI and set it as `MONGODB_URI`
 
 ### Images → Cloudinary
 1. Create a free account at [cloudinary.com](https://cloudinary.com)
