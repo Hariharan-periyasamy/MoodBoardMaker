@@ -10,8 +10,13 @@ const validateEnv = () => {
     console.log('ℹ️ Using MONGO_URI environment variable for MONGODB_URI.');
   }
 
+  // Sanitize MONGODB_URI (strip quotes if pasted with quotes in Render)
+  if (process.env.MONGODB_URI) {
+    process.env.MONGODB_URI = process.env.MONGODB_URI.trim().replace(/^["']+|["']+$/g, '');
+  }
+
   // Check MONGODB_URI
-  if (!process.env.MONGODB_URI || !process.env.MONGODB_URI.trim()) {
+  if (!process.env.MONGODB_URI) {
     console.error('\n============================================================');
     console.error('❌ MONGODB_URI environment variable is missing.');
     console.error('============================================================');
@@ -20,7 +25,7 @@ const validateEnv = () => {
     console.error('   2. Click your web service: moodboard-api');
     console.error('   3. Click "Environment" in the left sidebar menu');
     console.error('   4. Add or edit key: MONGODB_URI');
-    console.error('   5. Paste your MongoDB Atlas connection string');
+    console.error('   5. Paste your MongoDB Atlas connection string (WITHOUT quotes)');
     console.error('   6. Click "Save Changes" and redeploy.');
     console.error('============================================================\n');
 
@@ -34,6 +39,19 @@ const validateEnv = () => {
   if (!process.env.JWT_SECRET || !process.env.JWT_SECRET.trim()) {
     console.warn('⚠️ JWT_SECRET is not set in environment. Using secure fallback.');
     process.env.JWT_SECRET = 'moodboard_jwt_secret_fallback_key_2026';
+  } else {
+    process.env.JWT_SECRET = process.env.JWT_SECRET.trim().replace(/^["']+|["']+$/g, '');
+  }
+
+  // Sanitize Cloudinary credentials
+  if (process.env.CLOUDINARY_CLOUD_NAME) {
+    process.env.CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME.trim().replace(/^["']+|["']+$/g, '');
+  }
+  if (process.env.CLOUDINARY_API_KEY) {
+    process.env.CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY.trim().replace(/^["']+|["']+$/g, '');
+  }
+  if (process.env.CLOUDINARY_API_SECRET) {
+    process.env.CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET.trim().replace(/^["']+|["']+$/g, '');
   }
 
   // Cloudinary credentials notice
