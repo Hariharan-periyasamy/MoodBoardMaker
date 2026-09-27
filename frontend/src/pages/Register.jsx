@@ -29,7 +29,11 @@ export default function Register() {
       toast.success('Account created! Welcome aboard 🎉');
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed');
+      if (err.code === 'ERR_NETWORK' || !err.response) {
+        toast.error('Cannot connect to API server. Please ensure the backend is running.');
+      } else {
+        toast.error(err.response?.data?.message || 'Registration failed');
+      }
     } finally {
       setLoading(false);
     }

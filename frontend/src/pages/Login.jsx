@@ -39,7 +39,11 @@ export default function Login() {
       toast.success('Welcome back! ✨');
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed. Check your credentials.');
+      if (err.code === 'ERR_NETWORK' || !err.response) {
+        toast.error('Cannot connect to API server. Please ensure the backend is running.');
+      } else {
+        toast.error(err.response?.data?.message || 'Login failed. Check your credentials.');
+      }
     } finally {
       setLoading(false);
     }
